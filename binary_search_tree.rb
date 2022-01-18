@@ -269,15 +269,20 @@ class Tree
     result
   end
 
-  # Takes node and returns height (maximum distance from node to leaf node)
-  # if node/tree does not exist, will return 0
+  # Takes node and returns height (maximum distance (i.e., number of edges) from node to leaf node)
+  # If tree does not exist, will return -1
 
-  def height(node = @root, count = 0, result = [])
-    height_of_all_paths(node, count, result).max
+  def height(node = @root)
+    return -1 if node.nil?
+
+    height_left = height_alt(node.left_node) + 1
+    height_right = height_alt(node.right_node) + 1
+
+    height_left > height_right ? height_left : height_right
   end
 
-  # Takes node and returns the depth of node (distance from node to root node).
-  # Returns nil if node does not exist
+  # Takes node and returns the depth of node (distance (i.e., number of edges) from node to root node).
+  # Returns -1 if node does not exist
 
   def depth(node)
     current_node = @root
@@ -288,7 +293,7 @@ class Tree
     end
 
     if current_node.nil? # Node could not be found
-      return nil
+      return -1
     else # Node found, return the count (depth)
       count
     end
