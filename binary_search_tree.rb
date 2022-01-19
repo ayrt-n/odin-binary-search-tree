@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Class representation of node within balanced binary search tree
 class Node
   include Comparable
@@ -275,8 +277,8 @@ class Tree
   def height(node = @root)
     return -1 if node.nil?
 
-    height_left = height_alt(node.left_node) + 1
-    height_right = height_alt(node.right_node) + 1
+    height_left = height(node.left_node) + 1
+    height_right = height(node.right_node) + 1
 
     height_left > height_right ? height_left : height_right
   end
@@ -301,19 +303,16 @@ class Tree
 
   # Checks whether the binary search tree is balanced
 
-  def balanced?
-    return true if @root.nil?
+  def balanced?(node = @root)
+    left_height = height(node.left_node)
+    right_height = height(node.right_node)
 
-    # Call height_of_all_paths on left and right subtree. Comparison of left and right subtree
-    # catches edge case where either tree is completely empty
-    left_sub_height = height_of_all_paths(@root.left_node).uniq
-    right_sub_height = height_of_all_paths(@root.right_node).uniq
-    height_array = left_sub_height + right_sub_height
-    if height_array.max - height_array.min >  1
-      false
-    else
-      true
-    end
+    # If other tree does not exist, set height to zero
+    left_height = 0 if left_height == -1
+    right_height = 0 if right_height == -1
+
+    # If difference between subtrees LTE to 1 then balanced, otherwise not
+    (left_height - right_height).abs <= 1 
   end
 
   # If tree is not balanced, will rebalance the tree
@@ -336,24 +335,6 @@ class Tree
   end
 
   private
-
-  # Takes node and returns the height of all paths from the node
-  # Used when trying to check whether tree is balanced
-
-  def height_of_all_paths(node = @root, count = 0, result = [])
-    return [0] if node.nil?
-  
-    count += 1
-  
-    if node.leaf_node?
-      result << count
-    else
-      height_of_all_paths(node.left_node, count, result)
-      height_of_all_paths(node.right_node, count, result)
-    end
-      
-    result
-  end
 
   # Abstraction to replace child node of parent. Checks whether right/left child and assigns Node
 
